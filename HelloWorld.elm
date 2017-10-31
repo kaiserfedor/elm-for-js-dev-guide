@@ -1,5 +1,10 @@
-import Html exposing (Html, button, div, text, h2)
+import Html exposing (Html, button, div, text, h2, a)
+import Html.Attributes exposing (title, id, href)
 import Html.Events exposing (onClick)
+import Bootstrap.CDN as CDN
+import Bootstrap.Grid as Grid
+import Bootstrap.Button as Button
+import Bootstrap.Card as Card
 
 main =
   Html.beginnerProgram { model = model, view = view, update = update }
@@ -25,9 +30,45 @@ update msg model =
         decrementCounter = model.decrementCounter + 1}
 
 view model =
+    Grid.container []
+        [ CDN.stylesheet
+        , CDN.fontAwesome
+        , mainContent model
+        ]
+
+mainContent model =
   div []
     [h2 [] [text ("Количество кликов по декременту " ++ (toString model.decrementCounter))]
-    ,button [ onClick Decrement ] [ text "-" ]
+    , Button.button
+        [ Button.onClick Decrement
+        , Button.success
+        , Button.large
+        , Button.attrs [ title "bootstrap кнопка", id "bootstrap-button" ]
+        ]
+        [ text "-" ]
     , div [] [ text (toString model.quantity) ]
-    , button [ onClick Increment ] [ text "+" ]
+    , button
+        [ onClick Increment
+        , title "Обычная html кнопка"
+        , id "simple-html-button"
+        ]
+        [ text "+" ]
+    , howItWorksSection
     ]
+
+howItWorksSection =
+    div []
+        [ h2 [] [ text "Что тут происходит:" ]
+        , div []
+            [ myCard "Счетчик, увеличивающий или уменьшающий значение в зависимости от нажатой кнопки."
+            , myCard "Для кнопки декремента используется компонент Button из пакета elm-bootstrap"
+            , myCard "Для кнопки инкремента используется обычная HTML кнопка"
+            ]
+        , a [ href "http://elm-lang.org/" ] [ text "Эта страничка сделана с помощью языка Elm" ]
+        ]
+
+myCard content =
+    Card.config [ Card.outlinePrimary ]
+        |> Card.block []
+            [ Card.text [] [ text content ] ]
+        |> Card.view
